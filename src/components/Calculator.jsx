@@ -20,6 +20,14 @@ const Calculator = () => {
             return;
         }
 
+        if (value === '%') {
+            // Simple percent logic: divide by 100
+            if (current) {
+                setCurrent((parseFloat(current) / 100).toString());
+            }
+            return;
+        }
+
         if (['+', '-', '×', '÷'].includes(value)) {
             if (current === '') return;
             if (previous !== '') {
@@ -76,14 +84,18 @@ const Calculator = () => {
 
     return (
         <div style={{
-            background: 'var(--glass-bg)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid var(--glass-border)',
-            borderRadius: '24px',
-            padding: '32px',
+            background: '#000',
+            borderRadius: '40px',
+            padding: '20px',
             width: '100%',
-            maxWidth: '400px',
-            boxShadow: 'var(--glass-shadow)',
+            maxWidth: '380px',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+            height: '800px', // Fixed height to simulate phone screen
+            maxHeight: '90vh',
+            border: '8px solid #333' // Bezel
         }}>
             <Display previous={previous + (operation ? ` ${operation}` : '')} current={current} />
             <Keypad onButtonClick={handleButtonClick} />

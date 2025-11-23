@@ -3,65 +3,50 @@ import React from 'react';
 const Button = ({ label, onClick, type = 'default', style }) => {
     const getStyle = () => {
         const baseStyle = {
-            padding: '20px',
-            fontSize: '1.25rem',
-            borderRadius: '12px',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            background: 'rgba(255, 255, 255, 0.05)',
-            color: '#fff',
-            transition: 'all 0.2s ease',
-            backdropFilter: 'blur(5px)',
+            width: '72px',
+            height: '72px',
+            fontSize: '1.75rem',
+            borderRadius: '50%',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'filter 0.2s ease',
+            margin: '8px',
+            fontWeight: '500',
         };
 
-        if (type === 'operator') {
+        if (type === 'operator' || type === 'equals') {
             return {
                 ...baseStyle,
-                background: 'rgba(99, 102, 241, 0.2)',
-                borderColor: 'rgba(99, 102, 241, 0.3)',
-                color: '#a5b4fc',
+                background: 'var(--btn-operator-bg)',
+                color: 'var(--btn-text-light)',
             };
         }
 
-        if (type === 'equals') {
+        if (type === 'clear' || type === 'backspace') {
             return {
                 ...baseStyle,
-                background: 'var(--primary-gradient)',
-                border: 'none',
-                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.4)',
-                fontWeight: '600',
+                background: 'var(--btn-function-bg)',
+                color: 'var(--btn-text-dark)',
             };
         }
 
-        if (type === 'clear') {
-            return {
-                ...baseStyle,
-                background: 'rgba(239, 68, 68, 0.1)',
-                borderColor: 'rgba(239, 68, 68, 0.2)',
-                color: '#fca5a5',
-            };
-        }
-
-        return baseStyle;
+        // Default (Numbers)
+        return {
+            ...baseStyle,
+            background: 'var(--btn-number-bg)',
+            color: 'var(--btn-text-light)',
+        };
     };
 
     return (
         <button
             onClick={() => onClick(label)}
             style={{ ...getStyle(), ...style }}
-            onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.background = type === 'equals'
-                    ? 'var(--primary-gradient)'
-                    : type === 'operator'
-                        ? 'rgba(99, 102, 241, 0.3)'
-                        : 'rgba(255, 255, 255, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-                e.target.style.transform = 'none';
-                e.target.style.background = getStyle().background;
-            }}
-            onMouseDown={(e) => e.target.style.transform = 'translateY(1px)'}
-            onMouseUp={(e) => e.target.style.transform = 'translateY(-2px)'}
+            onMouseDown={(e) => e.target.style.filter = 'brightness(1.2)'}
+            onMouseUp={(e) => e.target.style.filter = 'none'}
+            onMouseLeave={(e) => e.target.style.filter = 'none'}
         >
             {label}
         </button>
@@ -73,7 +58,7 @@ const Keypad = ({ onButtonClick }) => {
         { label: 'C', type: 'clear' },
         { label: '÷', type: 'operator' },
         { label: '×', type: 'operator' },
-        { label: '⌫', type: 'operator' },
+        { label: '⌫', type: 'backspace' },
         { label: '7' },
         { label: '8' },
         { label: '9' },
@@ -85,9 +70,48 @@ const Keypad = ({ onButtonClick }) => {
         { label: '1' },
         { label: '2' },
         { label: '3' },
-        { label: '=', type: 'equals', style: { gridRow: 'span 2' } },
-        { label: '0', style: { gridColumn: 'span 2' } },
+        { label: '=', type: 'equals', style: { gridRow: 'span 2', height: '160px', borderRadius: '40px' } }, // Special tall equals button often seen in some designs, or we can keep it standard. Let's make it standard circular for consistency with typical grid, or maybe the user wants the big equals. Standard grid is safer for "MIUI" which is usually uniform. Wait, MIUI usually has equals at bottom right. Let's stick to a standard 4x5 grid if possible, or the current layout.
+        // The current layout in previous step had equals spanning 2 rows.
+        // Let's adjust to a standard 4-column layout where equals is just bottom right.
+        // Row 1: C, Div, Mul, Del
+        // Row 2: 7, 8, 9, -
+        // Row 3: 4, 5, 6, +
+        // Row 4: 1, 2, 3, = (spanning?)
+        // Row 5: 0, .
+
+        // Let's try a standard layout:
+        // C  ( )  %  /
+        // 7   8   9  x
+        // 4   5   6  -
+        // 1   2   3  +
+        // 0   .   =  =
+    ];
+
+    // Re-defining buttons for a cleaner 4x5 grid
+    const gridButtons = [
+        { label: 'C', type: 'clear' },
+        { label: '⌫', type: 'backspace' },
+        { label: '%', type: 'function' }, // Added % for aesthetics, logic can be added later or just ignored
+        { label: '÷', type: 'operator' },
+
+        { label: '7' },
+        { label: '8' },
+        { label: '9' },
+        { label: '×', type: 'operator' },
+
+        { label: '4' },
+        { label: '5' },
+        { label: '6' },
+        { label: '-', type: 'operator' },
+
+        { label: '1' },
+        { label: '2' },
+        { label: '3' },
+        { label: '+', type: 'operator' },
+
+        { label: '0', style: { width: '160px', borderRadius: '40px', gridColumn: 'span 2' } }, // Wide 0
         { label: '.' },
+        { label: '=', type: 'equals' },
     ];
 
     return (
@@ -95,8 +119,10 @@ const Keypad = ({ onButtonClick }) => {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '12px',
+            justifyItems: 'center',
+            padding: '10px'
         }}>
-            {buttons.map((btn, index) => (
+            {gridButtons.map((btn, index) => (
                 <Button
                     key={index}
                     label={btn.label}

@@ -1,11 +1,11 @@
 :root {
-  --bg-color: #0f172a;
-  --text-color: #f8fafc;
-  --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  --secondary-gradient: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --btn-number-bg: #333333;
+  --btn-operator-bg: #ff9f0a;
+  --btn-function-bg: #a5a5a5;
+  --btn-text-dark: #000000;
+  --btn-text-light: #ffffff;
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -18,9 +18,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%),
-    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 20%);
 }
 
 * {

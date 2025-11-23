@@ -3,8 +3,8 @@ import React from 'react';
 const Button = ({ label, onClick, type = 'default', style }) => {
     const getStyle = () => {
         const baseStyle = {
-            width: '72px',
-            height: '72px',
+            width: '100%', // Responsive width
+            aspectRatio: '1', // Keep circular
             fontSize: '1.75rem',
             borderRadius: '50%',
             border: 'none',
@@ -12,8 +12,8 @@ const Button = ({ label, onClick, type = 'default', style }) => {
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'filter 0.2s ease',
-            margin: '8px',
             fontWeight: '500',
+            // Removed margin, relying on grid gap
         };
 
         if (type === 'operator' || type === 'equals') {
@@ -24,7 +24,7 @@ const Button = ({ label, onClick, type = 'default', style }) => {
             };
         }
 
-        if (type === 'clear' || type === 'backspace') {
+        if (type === 'clear' || type === 'backspace' || type === 'function') {
             return {
                 ...baseStyle,
                 background: 'var(--btn-function-bg)',
@@ -54,44 +54,10 @@ const Button = ({ label, onClick, type = 'default', style }) => {
 };
 
 const Keypad = ({ onButtonClick }) => {
-    const buttons = [
-        { label: 'C', type: 'clear' },
-        { label: '÷', type: 'operator' },
-        { label: '×', type: 'operator' },
-        { label: '⌫', type: 'backspace' },
-        { label: '7' },
-        { label: '8' },
-        { label: '9' },
-        { label: '-', type: 'operator' },
-        { label: '4' },
-        { label: '5' },
-        { label: '6' },
-        { label: '+', type: 'operator' },
-        { label: '1' },
-        { label: '2' },
-        { label: '3' },
-        { label: '=', type: 'equals', style: { gridRow: 'span 2', height: '160px', borderRadius: '40px' } }, // Special tall equals button often seen in some designs, or we can keep it standard. Let's make it standard circular for consistency with typical grid, or maybe the user wants the big equals. Standard grid is safer for "MIUI" which is usually uniform. Wait, MIUI usually has equals at bottom right. Let's stick to a standard 4x5 grid if possible, or the current layout.
-        // The current layout in previous step had equals spanning 2 rows.
-        // Let's adjust to a standard 4-column layout where equals is just bottom right.
-        // Row 1: C, Div, Mul, Del
-        // Row 2: 7, 8, 9, -
-        // Row 3: 4, 5, 6, +
-        // Row 4: 1, 2, 3, = (spanning?)
-        // Row 5: 0, .
-
-        // Let's try a standard layout:
-        // C  ( )  %  /
-        // 7   8   9  x
-        // 4   5   6  -
-        // 1   2   3  +
-        // 0   .   =  =
-    ];
-
-    // Re-defining buttons for a cleaner 4x5 grid
     const gridButtons = [
         { label: 'C', type: 'clear' },
         { label: '⌫', type: 'backspace' },
-        { label: '%', type: 'function' }, // Added % for aesthetics, logic can be added later or just ignored
+        { label: '%', type: 'function' },
         { label: '÷', type: 'operator' },
 
         { label: '7' },
@@ -109,7 +75,7 @@ const Keypad = ({ onButtonClick }) => {
         { label: '3' },
         { label: '+', type: 'operator' },
 
-        { label: '0', style: { width: '160px', borderRadius: '40px', gridColumn: 'span 2' } }, // Wide 0
+        { label: '0', style: { aspectRatio: 'auto', borderRadius: '40px', gridColumn: 'span 2' } }, // Wide 0 needs auto aspect ratio or specific height
         { label: '.' },
         { label: '=', type: 'equals' },
     ];
@@ -118,9 +84,10 @@ const Keypad = ({ onButtonClick }) => {
         <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '12px',
+            gap: '15px', // Increased gap slightly for better spacing
             justifyItems: 'center',
-            padding: '10px'
+            padding: '10px',
+            width: '100%',
         }}>
             {gridButtons.map((btn, index) => (
                 <Button

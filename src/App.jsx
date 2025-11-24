@@ -4,6 +4,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { logLogoutEvent } from './firestoreService';
 import Calculator from './components/Calculator';
 import Login from './components/Login';
+import Weather from './components/Weather';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -71,6 +72,9 @@ function App() {
 
   return (
     <div className="App" style={{ position: 'relative', minHeight: '100vh' }}>
+      {/* Weather button in top left */}
+      <Weather />
+
       {user && (
         <button
           onClick={handleLogout}

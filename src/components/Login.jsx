@@ -48,7 +48,7 @@ const Login = ({ onLogin }) => {
                 {isSignUp ? 'Create Account' : 'Welcome'}
             </h2>
             <p style={{ color: '#888', marginBottom: '30px' }}>
-                {isSignUp ? 'Sign up to get started' : 'Login to continue123'}
+                {isSignUp ? 'Sign up to get started' : 'Login to continue1234'}
             </p>
 
             {error && (

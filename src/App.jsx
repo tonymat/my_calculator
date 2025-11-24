@@ -1,18 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { logLogoutEvent } from './firestoreService';
 import Calculator from './components/Calculator';
 import Login from './components/Login';
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const loginTimeRef = useRef(null);
 
   useEffect(() => {
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
+
+      // Store login time when user logs in
+      if (currentUser && !loginTimeRef.current) {
+        loginTimeRef.current = Date.now();
+      }
+
+      // Clear login time when user logs out
+      if (!currentUser) {
+        loginTimeRef.current = null;
+      }
     });
 
     // Cleanup subscription
@@ -21,11 +33,23 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
+    loginTimeRef.current = Date.now();
   };
 
   const handleLogout = async () => {
     try {
+      // Calculate session duration
+      const sessionDuration = loginTimeRef.current
+        ? Math.round((Date.now() - loginTimeRef.current) / 1000)
+        : 0;
+
+      // Log logout event before signing out
+      if (user) {
+        await logLogoutEvent(user.uid, user.email, sessionDuration);
+      }
+
       await signOut(auth);
+      loginTimeRef.current = null;
     } catch (error) {
       console.error('Logout error:', error);
     }

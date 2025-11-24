@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { saveMailingListSignup, logLoginEvent, logFailedLoginAttempt } from '../firestoreService';
 
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
@@ -16,14 +17,34 @@ const Login = ({ onLogin }) => {
             if (isSignUp) {
                 // Create new user
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+                // Save to mailing list
+                await saveMailingListSignup(userCredential.user.email, "", "auth");
+
+                // Log the login event (first login after signup)
+                await logLoginEvent(userCredential.user.uid, userCredential.user.email);
+
                 onLogin(userCredential.user);
             } else {
                 // Sign in existing user
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+                // Log the login event
+                await logLoginEvent(userCredential.user.uid, userCredential.user.email);
+
                 onLogin(userCredential.user);
             }
         } catch (error) {
             console.error('Authentication error:', error);
+
+            // Log failed attempt to Firestore
+            await logFailedLoginAttempt(
+                email,
+                error.code || 'unknown-error',
+                error.message,
+                isSignUp ? 'signup' : 'login'
+            );
+
             setError(error.message);
         }
     };

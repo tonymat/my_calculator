@@ -72,34 +72,36 @@ function App() {
 
   return (
     <div className="App" style={{ position: 'relative', minHeight: '100vh' }}>
-      {/* Weather button in top left */}
-      <Weather />
-
       {user && (
-        <button
-          onClick={handleLogout}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: '#e53935',
-            color: '#fff',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '25px',
-            fontSize: '0.9rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            zIndex: 1000,
-            transition: 'transform 0.2s, background 0.2s',
-          }}
-          onMouseEnter={(e) => e.target.style.background = '#d32f2f'}
-          onMouseLeave={(e) => e.target.style.background = '#e53935'}
-          onMouseDown={(e) => e.target.style.transform = 'scale(0.95)'}
-          onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
-        >
-          Logout
-        </button>
+        <>
+          {/* Weather button in top left - only when logged in */}
+          <Weather />
+
+          <button
+            onClick={handleLogout}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: '#e53935',
+              color: '#fff',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '25px',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              zIndex: 1000,
+              transition: 'transform 0.2s, background 0.2s',
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#d32f2f'}
+            onMouseLeave={(e) => e.target.style.background = '#e53935'}
+            onMouseDown={(e) => e.target.style.transform = 'scale(0.95)'}
+            onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
+          >
+            Logout
+          </button>
+        </>
       )}
       {user ? (
         <Calculator />
